@@ -10,8 +10,8 @@
                     
                     <div class="mt-4">
                         <a href="{{ route('pacientes.index') }}" class="btn btn-success">Pacientes</a>
-                        <a href="{{ route('pacientes.create') }}" class="btn btn-primary">Alta paciente</a>
-                        <a href="{{ route('turnos.create') }}" class="btn btn-success">Alta turno</a>
+                        <a href="{{ route('pacientes.create') }}" class="btn btn-primary">Crear paciente</a>
+                        <a href="{{ route('turnos.create') }}" class="btn btn-success">Crear turno</a>
                         <a href="{{ route('turnos.index') }}" class="btn btn-primary">Turnos</a>
                     </div>
                 </div>

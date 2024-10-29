@@ -26,11 +26,11 @@
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" id="email" value="{{ old('email') }}" required>
+            <input type="email" name="email" class="form-control" id="email" value="{{ old('email') }}" >
         </div>
         <div class="mb-3">
             <label for="nro_documento" class="form-label">Nro documento</label>
-            <input type="text" name="nro_documento" class="form-control" id="nro_documento" value="{{ old('nro_documento') }}">
+            <input type="text" name="nro_documento" class="form-control" id="nro_documento" value="{{ old('nro_documento') }}" required>
         </div>
         <div class="mb-3">
             <label for="telefono" class="form-label">Telefono</label>

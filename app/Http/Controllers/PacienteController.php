@@ -29,7 +29,7 @@ class PacienteController extends Controller
          $request->validate([
              'nombre' => 'required|string|max:255',
              'apellido' => 'required|string|max:255',
-             'email' => 'required|email|unique:pacientes',
+             'nro_documento' => 'required|string|max:255',
          ]);
  
          // Creación del paciente

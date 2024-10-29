@@ -21,7 +21,7 @@ use App\Http\Controllers\TurnoController;
 // });
 
 Route::get('/', function () {
-    return view('dashboard');
+    return view('menu');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
