@@ -1,8 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+        .custom-title {
+            font-size: 3rem;
+            color: #ff5733; /* Cambia este color según tu preferencia */
+            font-weight: bold;
+            text-align: center;
+        }
+</style>
 <div class="container">
-    <h1>Crear Paciente</h1>
+        <h1 class="mt-4 custom-title">Crear Paciente</h1>
+        <!-- Resto de tu contenido -->
+</div>
+<div class="container">
 
     @if ($errors->any())
         <div class="alert alert-danger">

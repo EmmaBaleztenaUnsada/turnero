@@ -40,11 +40,18 @@
             background-color: transparent; /* O color claro */
             border: none;
         }
-
+        .custom-title {
+            font-size: 3rem;
+            color: #ff5733; /* Cambia este color según tu preferencia */
+            font-weight: bold;
+            text-align: center;
+        }
 </style>
-
     <div class="container">
-        <h1 class="mt-4">Crear Turno</h1>
+        <h1 class="mt-4 custom-title">Crear Turno</h1>
+        <!-- Resto de tu contenido -->
+    </div>
+    <div class="container">
 
         <div id="mensaje"></div> <!-- Contenedor para mensajes -->
 
@@ -91,7 +98,7 @@
 
 
         <!-- CALENDARIO -->
-        <div class="container mt-4" id="calendario" style="display: none;">
+        <!-- <div class="container mt-4" id="calendario" style="display: none;">
             <h3>Calendario de Turnos</h3>
             <div class="calendar-header d-flex justify-content-between align-items-center">
                 <button id="prevMonth" class="btn btn-primary">&lt;</button>
@@ -108,15 +115,45 @@
                 <div class="col">Sáb</div>
             </div>
             <div id="calendarDays" class="row mt-2">
-                <!-- Días generados dinámicamente -->
+                Días generados dinámicamente 
             </div>
             
-            <!-- Contenedor para horarios disponibles -->
+            Contenedor para horarios disponibles 
+            <div id="horariosDisponibles" class="mt-4">
+                <h5>Horarios Disponibles</h5>
+                <ul id="listaHorarios"></ul>
+            </div>
+        </div> -->
+        <div class="container mt-4" id="calendario" style="display: none;">
+            <h3>Calendario de Turnos</h3>
+            <div class="calendar-header d-flex justify-content-between align-items-center">
+                <button id="prevMonth" class="btn btn-primary" onclick="changeMonth(-1)">&lt;</button>
+                <h4 id="calendarMonth"></h4>
+                <button id="nextMonth" class="btn btn-primary" onclick="changeMonth(1)">&gt;</button>
+            </div>
+            <div class="row text-center font-weight-bold mt-2 days-of-week">
+                <div class="col">Dom</div>
+                <div class="col">Lun</div>
+                <div class="col">Mar</div>
+                <div class="col">Mié</div>
+                <div class="col">Jue</div>
+                <div class="col">Vie</div>
+                <div class="col">Sáb</div>
+            </div>
+            <div id="calendarDays" class="row mt-2">
+                <!-- Días generados dinámicamente -->
+            </div>
+            <!-- Contenedor para horarios disponibles  -->
             <div id="horariosDisponibles" class="mt-4">
                 <h5>Horarios Disponibles</h5>
                 <ul id="listaHorarios"></ul>
             </div>
         </div>
+
+
+
+
+
 
 <!-- Modal para seleccionar horarios -->
 <div class="modal fade" id="horariosModal" tabindex="-1" aria-labelledby="horariosModalLabel" aria-hidden="true">
@@ -154,93 +191,77 @@
 <script>
     let currentDate = new Date();
 
+
+    let turnos = []; // Variable global para almacenar los turnos del paciente
+
     function renderCalendar() {
         const month = currentDate.getMonth();
         const year = currentDate.getFullYear();
         document.getElementById('calendarMonth').innerText = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+        
         const firstDayOfMonth = new Date(year, month, 1).getDay();
         const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
 
         let daysHTML = '';
         for (let i = 0; i < firstDayOfMonth; i++) {
-            daysHTML += '<div class="day"></div>'; // Espacios vacíos
+            daysHTML += '<div class="day empty"></div>';
         }
         for (let i = 1; i <= lastDayOfMonth; i++) {
-            const occupied = Math.random() < 0.5; // Simulando si el día está ocupado
-            //const className = occupied ? 'occupied' : 'available';
-            const className = 'occupied';
-            daysHTML += `<div class="day ${className}">${i}</div>`;
+            const fecha = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const turno = turnos.find(t => t.fecha === fecha);
+            let dayClass = "day";
+            let dayAttributes = "";
+
+            if (turno) {
+                if (turno.estado === "libre") {
+                    dayClass += ' bg-success text-white';
+                    dayAttributes = `onclick="mostrarHorarios('${fecha}')"`;
+                } else {
+                    dayClass += ' bg-danger text-white';
+                }
+            } else {
+                dayClass += ' bg-danger text-white';
+            }
+            daysHTML += `<div class="${dayClass}" ${dayAttributes}>${i}</div>`;
         }
         document.getElementById('calendarDays').innerHTML = daysHTML;
     }
 
-    function generarCalendario(turnos) {
-        $('#calendarDays').empty(); // Limpiar el contenedor de días
-        $('#listaHorarios').empty(); // Limpiar lista de horarios
-
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth();
-        const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0); // Último día del mes
-
-        // Obtener el primer día del mes y su índice
-        const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-        const firstDayIndex = firstDayOfMonth.getDay();
-
-        // Agregar celdas vacías
-        for (let i = 0; i < firstDayIndex; i++) {
-            $('#calendarDays').append('<div class="day empty"></div>'); // Celda vacía
-        }
-
-        // Iterar a través de los días del mes
-        for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
-            const dia = new Date(currentYear, currentMonth, i);
-            const fecha = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-
-            const turno = turnos.find(t => t.fecha === fecha);
-            const dayCell = $('<div class="day"></div>').text(i);
-
-            if (turno) {
-                if (turno.estado === "libre") {
-                    dayCell.addClass('bg-success text-white'); // Día libre
-                    dayCell.on('click', function() { // Evento click
-                        mostrarHorarios(turnos, fecha);
-                    });
-                } else {
-                    dayCell.addClass('bg-danger text-white'); // Día ocupado
-                }
-            } else {
-                dayCell.addClass('bg-danger text-white'); // Día sin turnos
-            }
-
-            $('#calendarDays').append(dayCell);
-        }
+    function changeMonth(direction) {
+        currentDate.setMonth(currentDate.getMonth() + direction);
+        renderCalendar();
     }
-    function mostrarHorarios(turnos, fecha) {
-        $('#selectHorarios').empty(); // Limpiar select de horarios
-        const horariosDisponibles = turnos
-            .filter(t => t.fecha === fecha && t.estado === "libre") // Filtrar horarios libres;
 
+    function generarCalendario(datosTurnos) {
+        turnos = datosTurnos; // Asignar los turnos a la variable global
+        renderCalendar(); // Renderizar el calendario con los datos actualizados
+    }
+
+    function mostrarHorarios(fecha) {
+        $('#selectHorarios').empty();
+        const horariosDisponibles = turnos.filter(t => t.fecha === fecha && t.estado === "libre");
         const valor = $('#id_paciente').val();
-        //console.log(valor);
-        //alert(valor);
         document.getElementById('hiddenId').value = valor;
 
         if (horariosDisponibles.length > 0) {
             horariosDisponibles.forEach(turno => {
-                $('#selectHorarios').append(`<option value="${turno.id}">${turno.fecha} ${turno.hora}</option>`); // Agregar horarios al select
-                
+                $('#selectHorarios').append(`<option value="${turno.id}">${turno.fecha} ${turno.hora}</option>`);
             });
-            $('#horariosModal').modal('show'); // Mostrar modal
+            $('#horariosModal').modal('show');
         } else {
-            $('#selectHorarios').append('<option>No hay horarios disponibles</option>'); // Mensaje si no hay horarios
-            $('#horariosModal').modal('show'); // Mostrar modal
+            $('#selectHorarios').append('<option>No hay horarios disponibles</option>');
+            $('#horariosModal').modal('show');
         }
     }
 
 
     renderCalendar();
 
+
+
     $(document).ready(function() {
+
+
         $('#buscarPaciente').click(function() {
             const nroDocumento = $('#nro_documento').val();
             if (nroDocumento) {
@@ -342,7 +363,11 @@
             const motivo = $('#motivo').val();
             $('#datosPaciente').hide();
             $('#calendario').hide();
-
+            console.info(pacienteId);
+            
+            // alert(pacienteId);
+            // alert(horarioSeleccionadoId);
+            // alert(motivo);
             // Verificar que ambos datos estén presentes
             if (pacienteId && horarioSeleccionadoId) {
                 // Enviar una solicitud AJAX al servidor para guardar el turno
@@ -384,6 +409,8 @@
                 alert('Por favor, selecciona un horario.');
             }
         });
+
+
 
     });
 </script>

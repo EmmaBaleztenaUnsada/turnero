@@ -1,7 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    
+<style>
+        .custom-title {
+            font-size: 3rem;
+            color: #ff5733; /* Cambia este color según tu preferencia */
+            font-weight: bold;
+            text-align: center;
+        }
+</style>
+<div class="container">
+        <h1 class="mt-4 custom-title">Menù</h1>
+        <!-- Resto de tu contenido -->
+</div>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
