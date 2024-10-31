@@ -4,7 +4,7 @@
 <style>
         .custom-title {
             font-size: 3rem;
-            color: #ff5733; /* Cambia este color según tu preferencia */
+            color: #000000; /* Cambia este color según tu preferencia */
             font-weight: bold;
             text-align: center;
         }
